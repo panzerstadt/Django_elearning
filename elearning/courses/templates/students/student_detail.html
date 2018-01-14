@@ -1,0 +1,12 @@
+<h1>Student detail</h1>
+
+<p>{{ student }}</p>
+
+<!-- course_set below is a function automatically made when we use ManyToManyField
+during the db relationship definition (in models.py). it gives us the whole subset related
+to the student -->
+<ul>
+    {% for course in student.course_set.all %}
+    <li>{{ course }}</li>
+    {% endfor %}
+</ul>

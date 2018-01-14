@@ -1,0 +1,9 @@
+<h1>Course Form</h1>
+
+<!-- csrf_token is a django only security feature to be used when you are editing your database, just to make
+sure nothing fishy happens -->
+<form action="" method="POST">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>
