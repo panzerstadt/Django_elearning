@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'courses',
     'students',
+    'auth_django',
 ]
 
 AUTH_USER_MODEL = 'students.User'
@@ -124,3 +125,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'elearning', 'static'), ]
+
+LOGIN_REDIRECT_URL = '/'

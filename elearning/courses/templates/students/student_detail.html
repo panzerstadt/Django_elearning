@@ -6,7 +6,12 @@
 during the db relationship definition (in models.py). it gives us the whole subset related
 to the student -->
 <ul>
-    {% for course in student.course_set.all %}
+    {% for course, entries in scores %}
     <li>{{ course }}</li>
+    <ul>
+        {% for section, score in entries %}
+        <li>{{ section }} : {{ score }}%</li>
+        {% endfor %}
+    </ul>
     {% endfor %}
 </ul>

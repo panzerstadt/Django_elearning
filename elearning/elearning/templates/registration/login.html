@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block "content" %}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>Login</h1>
+                <form action="{% url 'auth_django:login' %}" method="post">
+                    <!-- the above url 'auth:login' is just the DjangoTemplateLanguage version of the
+                    reverse function that was used in models to send links around -->
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <!-- wth this turns the form into text by just converting here!_ -->
+                    <div><input type="submit" value="Login"</div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

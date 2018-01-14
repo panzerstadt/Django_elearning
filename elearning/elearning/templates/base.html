@@ -11,6 +11,22 @@
     <link href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
 </head>
 <body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                {% if request.user.is_authenticated %}
+                <p>
+                    Logged in as <a href="{% url 'student_detail' %}">{{ request.user.username }}</a>
+                    (<a href="{% url 'auth_django:logout' %}">Logout</a>)
+                </p>
+                {% else %}
+                <p>
+                    <a href="{% url 'auth_django:login' %}">Login</a>
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
     <!-- this Default Content block will be overwritten by the child templates -->
     {% block "content" %}Default Content{% endblock %}
     <script src="{% static 'jquery-1.12.4.min.js' %}"></script>

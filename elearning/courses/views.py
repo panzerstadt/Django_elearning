@@ -119,7 +119,10 @@ def calculate_score(user, section):
         question__section=section,
         answer__correct=True
     )
-    return (correct_answers.count() / questions.count()) * 100
+    try:
+        return (correct_answers.count() / questions.count()) * 100
+    except:
+        return 'not taken'
 
 def show_results(request, section_id):
     if not request.user.is_authenticated:
