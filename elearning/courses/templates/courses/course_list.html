@@ -1,14 +1,32 @@
-<h1>Course List</h1>
+{% extends "base.html" %}
 
-<ol>
-{% for course in courses %}
-    <li>{{ course.name }}</li>
+{% block "content" %}
 
-    <ul>
-        {% for student in course.students.all %}
-            <li>{{ student }}</li>
-        {% endfor %}
-    </ul>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>Course List</h1>
 
-{% endfor %}
-</ol>
+            <ol>
+            {% for course in courses %}
+                <li>
+                    <a href="{{ course.get_absolute_url }}">{{ course.name }}</a></li>
+                <!--
+                replaced with the one that has links
+                <li>{{ course.name }}</li>
+                -->
+
+                <ul>
+                    {% for student in course.students.all %}
+                        <li>{{ student }}</li>
+                    {% endfor %}
+                </ul>
+
+            {% endfor %}
+            </ol>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
