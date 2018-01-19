@@ -5,6 +5,13 @@ from django.db import transaction
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.urls import reverse
 
+# to use class based views import these
+"""
+Django also has generic views to make it super easy to make views without having to repeat stuff
+they exist as class views.
+"""
+from django.views.generic import DetailView, CreateView, ListView
+
 
 from courses.models import Course, Section, Question, UserAnswer
 from courses.forms import CourseForm
@@ -24,35 +31,78 @@ def my_rendered_view(request, who):
         'who': who,
     })
 
-def course_detail(request, course_id):
-    course = Course.objects.get(id=course_id)
-    return render(request, 'courses/course_detail.html', {
-        'course': course,
-    })
+# function based view
+# if using class based view, course and return render uses a default template
+# (which is what is used for the current function below)
+# def course_detail(request, course_id):
+#     course = Course.objects.get(id=course_id)
+#     return render(request, 'courses/course_detail.html', {
+#         'course': course,
+#     })
 
-def course_list(request):
-    # the below is inefficient apparently
-    #courses = Course.objects.all()
-    # so we use one of two: prefetch_related() or select_related() function
-    # select_related() for OneToMany
-    # prefetch_related() for ManyToMany, and ManyToOne(the 'Many' end of the OneToMany relationship)
-    courses = Course.objects.prefetch_related('students')
-    # it performs one database query per related model
-    return render(request, 'courses/course_list.html', {
-        'courses':courses,
-    })
+# class based view
+class CourseDetailView(DetailView):
+    # this class, when turned into a view,
+    # has the default return as (current folder, name of variable that you tie your class to)
 
-def course_add(request):
-    if request.POST:
-        form = CourseForm(request.POST)
-        if form.is_valid():
-            new_course = form.save()
-            return HttpResponseRedirect(new_course.get_absolute_url())
-    else:
-        form = CourseForm()
-        return render(request, 'courses/course_form.html', {
-            'form': form,
-        })
+    # the only thing you really need to get class based views to work is to
+    # point it to the model in use (like below)
+    model = Course
+
+# this is how you turn a class into a view method
+# you call the .as_view() to turn the class into a view. not all classes obviously
+# this turns 'course_detail' into a view function
+course_detail = CourseDetailView.as_view()
+
+# same here
+# def course_list(request):
+#     # the below is inefficient apparently
+#     #courses = Course.objects.all()
+#     # so we use one of two: prefetch_related() or select_related() function
+#     # select_related() for OneToMany
+#     # prefetch_related() for ManyToMany, and ManyToOne(the 'Many' end of the OneToMany relationship)
+#     courses = Course.objects.prefetch_related('students')
+#     # it performs one database query per related model
+#     return render(request, 'courses/course_list.html', {
+#         'courses':courses,
+#     })
+
+class CourseListView(ListView):
+    model = Course
+    # this is also a performance enhancement option used in the function based view
+    # othersie it will default to Course.objects.all(), where Course is the model
+    # you're accessing (model = database)
+    queryset = Course.objects.prefetch_related('students')
+
+course_list = CourseListView.as_view()
+
+# 2 lines in class based views vs 10.
+# but function based views are more debuggable
+# to debug class based views, you usually have to go into
+# the superclasses to fix stuff O_O
+# def course_add(request):
+#     if request.POST:
+#         form = CourseForm(request.POST)
+#         if form.is_valid():
+#             new_course = form.save()
+#             return HttpResponseRedirect(new_course.get_absolute_url())
+#     else:
+#         form = CourseForm()
+#         return render(request, 'courses/course_form.html', {
+#             'form': form,
+#         })
+
+class CourseAddView(CreateView):
+    model = Course
+    # in create view, this is required
+    # this specifies the list of views that the class should accept
+    # TODO: NOT RECOMMENDED IN REAL WORLD APPLICATIONS, BECAUSE
+    # TODO: IF YOU WRITE NEW FIELDS THAT SHOULD NOT BE WRITEABLE
+    # TODO: BY A USER AND YOU DON'T CHANGE THIS,
+    # TODO: THERE WILL BE A SECURITY ISSUE
+    fields = '__all__'
+
+course_add = CourseAddView.as_view()
 
 def do_section(request, section_id):
     section = Section.objects.get(id=section_id)
@@ -60,6 +110,10 @@ def do_section(request, section_id):
         'section': section,
     })
 
+# this is damn hard to turn into a class based view
+# and there is no benefit because it is quite specific to this use case
+# and doing it as a class based view does not shorten the code substantially, while
+# debugging it would be harder (superclass is in another file)
 def do_test(request, section_id):
     # check if the user is logged in, reject, which will result in a http error 403
     if not request.user.is_authenticated:

@@ -55,7 +55,10 @@ urlpatterns = [
     # this just imports the list of urlpatterns inside django's contrib.auth.urls file
     path('', include(auth_urls, namespace='auth_django')),
 
-    re_path(r'^course_detail/(?P<course_id>\d+)/$', course_detail, name='course_detail'),
+    # the below only works for function based views (defined by ourselves)
+    #re_path(r'^course_detail/(?P<course_id>\d+)/$', course_detail, name='course_detail'),
+    # a class based view has their own naming conventions
+    re_path(r'^course_detail/(?P<pk>\d+)/$', course_detail, name='course_detail'),
     path('student_detail/', student_detail, name='student_detail'),
 
     re_path(r'^section/(?P<section_id>\d+)/$', do_section, name='do_section'),

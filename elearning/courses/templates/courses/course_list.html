@@ -8,7 +8,9 @@
             <h1>Course List</h1>
 
             <ol>
-            {% for course in courses %}
+            {% for course in course_list %}
+            <!-- { for course in courses }  this is for function based views -->
+            <!-- this is the default name used my the class view -->
                 <li>
                     <a href="{{ course.get_absolute_url }}">{{ course.name }}</a></li>
                 <!--
