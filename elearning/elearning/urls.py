@@ -17,6 +17,8 @@ from django.contrib import admin, auth
 from django.urls import path  # previously called url
 from django.urls import re_path, include
 
+from rest_framework import routers
+
 # testing for django.contrib.auth.urls namespace problem workaround
 import auth_django.urls as auth_urls
 
@@ -30,8 +32,20 @@ from courses.views import (my_first_view,
                            do_section,
                            do_test,
                            show_results)
+from api.views import UserViewSet, SectionViewSet
 
-
+# this router is from rest_framework, that connects the
+# django-rest-framework's ViewSets methods to django itself.
+# steps:
+# 1. make a router, and register the viewsets (django rest framework will solve everything else)
+# 2. in urlpatterns, make a pattern that links to router.urls (managed by rest_framework so no worries)
+# 3. edit stuff in the ViewSet class instead of views
+# 3a. the guy magically mixed the classes from api.views into courses.views and students.views
+# 3b. but splitting it into a separate 'app' that represents the django-rest-framework library method
+#     keeps it conceptually separate
+router = routers.DefaultRouter()
+router.register(r'users', UserViewSet)
+router.register(r'sections', SectionViewSet)
 
 # ^$ means this applies to absolutely anything in the multiline input. ^ start of line, $ means end of line
 # url patterns are things that connect urls to the views (the functions that do things), so you can define
@@ -67,6 +81,9 @@ urlpatterns = [
 
     path('course_add/', course_add, name='course_add'),
     re_path(r'^course_list/$', course_list),
+
+    # the django-rest-framework library part. doesn't have to be /api, could be /whateverfloatsyourboat
+    re_path(r'^api/', include(router.urls)),
 
     re_path(r'^(?P<who>.*)/$', my_rendered_view),
     path('liqun/', my_first_view),
