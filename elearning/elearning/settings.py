@@ -31,9 +31,9 @@ if DEBUG in ['Off', 'off', 'No', 'no', 'False', 'false', '0', '']:
 else:
     DEBUG = True
 
-
+# not the https, only the host name (so, without https)
 ALLOWED_HOSTS = [
-    'https://desolate-tundra-96112.herokuapp.com/',
+    'desolate-tundra-96112.herokuapp.com',
     'localhost'
 ]
 
