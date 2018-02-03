@@ -33,7 +33,7 @@ else:
 
 
 ALLOWED_HOSTS = [
-    'https://pacific-brook-18815.herokuapp.com/',
+    'https://desolate-tundra-96112.herokuapp.com/',
     'localhost'
 ]
 
