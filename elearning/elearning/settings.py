@@ -20,12 +20,22 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'lyj2$(idoqij66__bb_-ljhssqxjou2r2l)#yo$qo!hqk@*$2u'
+# enables heroku to set the secret key is given, if not defaults to dev secret key
+SECRET_KEY = os.environ.get('SECRET_KEY',
+                            'lyj2$(idoqij66__bb_-ljhssqxjou2r2l)#yo$qo!hqk@*$2u')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', True)
+if DEBUG.lower() in ['off', 'no', 'false', '0', '']:
+    DEBUG = False
+else:
+    DEBUG = True
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = [
+    'https://pacific-brook-18815.herokuapp.com/',
+    'localhost'
+]
 
 
 # Application definition
@@ -80,12 +90,23 @@ WSGI_APPLICATION = 'elearning.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+# configuration for different machines following the 12factor principle, by allowing
+# DATABASE_URL to configure the application
+# default= local dev app fallback
+import dj_database_url
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': dj_database_url.config(
+        conn_max_age=600,
+        default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
+    )
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 
 # Password validation
